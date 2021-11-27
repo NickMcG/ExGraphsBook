@@ -103,6 +103,51 @@ defmodule GraphCommons.Query do
     new(query_data, query_file, query_type)
   end
 
+  ## MACROS
+
+  defmacro __using__(opts) do
+    query_type = Keyword.get(opts, :query_type)
+
+    quote do
+
+      ## TYPES
+
+      @type query_file_test :: GraphCommons.file_test()
+
+      @type query_data :: GraphCommons.Query.query_data()
+      @type query_file :: GraphCommons.Query.query_file()
+      @type query_path :: GraphCommons.Query.query_path()
+      @type query_type :: GraphCommons.Query.query_type()
+      @type query_uri :: GraphCommons.Query.query_uri()
+
+      @type query_t :: GraphCommons.Query.t()
+
+      ## FUNCTIONS
+
+      def list_queries(query_file_test \\ :exists?),
+        do: GraphCommons.Query.list_queries(
+          unquote(query_type), query_file_test)
+
+      def list_queries_dir(dir, query_file_test \\ :exists?),
+        do: GraphCommons.Query.list_queries_dir(dir,
+          unquote(query_type), query_file_test)
+
+      def new_query(query_data), do: new_query(query_data, "")
+
+      def new_query(query_data, query_file),
+        do: GraphCommons.Query.new(query_data, query_file,
+          unquote(query_type))
+
+      def read_query(query_file),
+        do: GraphCommons.Query.read_query(query_file,
+          unquote(query_type))
+
+      def write_query(query_data, query_file),
+        do: GraphCommons.Query.write_query(query_data, query_file,
+          unquote(query_type))
+    end
+  end
+
   ## IMPLEMENTATIONS
 
   defimpl Inspect, for: __MODULE__ do

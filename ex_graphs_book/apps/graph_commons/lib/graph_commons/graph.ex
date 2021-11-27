@@ -100,6 +100,54 @@ defmodule GraphCommons.Graph do
     new(graph_data, graph_file, graph_type)
   end
 
+  ## MACROS
+
+  defmacro __using__(opts) do
+    graph_type = Keyword.get(opts, :graph_type)
+    graph_module = Keyword.get(opts, :graph_module)
+
+    quote do
+
+      ## TYPES
+
+       @type graph_file_test :: GraphCommons.file_test()
+
+       @type graph_data :: GraphCommons.Graph.graph_data()
+       @type graph_file :: GraphCommons.Graph.graph_file()
+       @type graph_path :: GraphCommons.Graph.graph_path()
+       @type graph_type :: GraphCommons.Graph.graph_type()
+       @type graph_uri :: GraphCommons.Graph.graph_uri()
+
+       @type graph_t :: GraphCommons.Graph.t()
+
+       ## FUNCTIONS
+
+       def graph_service(), do: unquote(graph_module)
+
+       def list_graphs(graph_file_test \\ :exists?),
+         do: GraphCommons.Graph.list_graphs(
+           unquote(graph_type), graph_file_test)
+
+       def list_graphs_dir(dir, graph_file_test \\ :exists?),
+         do: GraphCommons.Graph.list_graphs_dir(dir,
+           unquote(graph_type), graph_file_test)
+
+       def new_graph(graph_data), do: new_graph(graph_data, "")
+
+       def new_graph(graph_data, graph_file),
+         do: GraphCommons.Graph.new(graph_data, graph_file,
+           unquote(graph_type))
+
+       def read_graph(graph_file),
+         do: GraphCommons.Graph.read_graph(graph_file,
+           unquote(graph_type))
+
+       def write_graph(graph_data, graph_file),
+         do: GraphCommons.Graph.write_graph(graph_data, graph_file,
+           unquote(graph_type))
+     end
+  end
+
   ## IMPLEMENTATIONS
 
   defimpl Inspect, for: __MODULE__ do
